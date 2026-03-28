@@ -1,3 +1,16 @@
+---
+title: Medical Triage Environment
+emoji: 🏥
+colorFrom: red
+colorTo: blue
+sdk: docker
+pinned: false
+---
+
+# Medical Triage Environment
+
+A realistic emergency department triage simulation for training and evaluating AI agents on critical healthcare decision-making.
+
 # Medical Triage Environment
 
 A realistic emergency department triage simulation for training and evaluating AI agents on critical healthcare decision-making.
