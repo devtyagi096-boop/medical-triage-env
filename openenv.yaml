@@ -1,0 +1,99 @@
+# openenv.yaml
+name: medical-triage
+version: 1.0.0
+description: Emergency department patient triage environment where agents must prioritize patients and manage limited medical resources
+author: Your Name
+license: MIT
+
+tasks:
+  - id: easy
+    name: Basic Triage
+    description: Low patient volume, adequate resources, straightforward cases
+    difficulty: easy
+    max_steps: 100
+    config:
+      arrival_rate: 0.3
+      total_beds: 8
+      staff_count: 4
+      max_patients: 15
+    
+  - id: medium
+    name: Standard ED Operations
+    description: Moderate patient volume with resource constraints and mixed acuity
+    difficulty: medium
+    max_steps: 100
+    config:
+      arrival_rate: 0.5
+      total_beds: 6
+      staff_count: 3
+      max_patients: 25
+    
+  - id: hard
+    name: Mass Casualty Scenario
+    description: High patient volume, limited resources, many critical cases requiring rapid decision-making
+    difficulty: hard
+    max_steps: 100
+    config:
+      arrival_rate: 0.7
+      total_beds: 5
+      staff_count: 2
+      max_patients: 35
+
+observation_space:
+  type: object
+  description: Current state of the emergency department
+  properties:
+    current_time:
+      type: float
+      description: Simulation time in minutes
+    waiting_patients:
+      type: array
+      description: Patients not yet triaged
+    triaged_patients:
+      type: array
+      description: Patients assigned priority, waiting for beds
+    available_beds:
+      type: integer
+      description: Number of available treatment beds
+    total_beds:
+      type: integer
+      description: Total treatment capacity
+    staff_available:
+      type: integer
+      description: Medical staff available
+
+action_space:
+  type: object
+  description: Agent actions in the environment
+  properties:
+    action_type:
+      type: string
+      enum: [triage, reassess, wait, call_specialist]
+      description: Type of action to take
+    patient_id:
+      type: string
+      description: ID of patient to act on (if applicable)
+    priority_level:
+      type: integer
+      minimum: 1
+      maximum: 5
+      description: Triage priority (1=Critical, 5=Non-urgent)
+    specialist_type:
+      type: string
+      description: Type of specialist to call (if applicable)
+    reasoning:
+      type: string
+      description: Agent's reasoning for the action
+
+reward_range:
+  min: -20.0
+  max: 10.0
+  description: Reward range per step
+
+tags:
+  - healthcare
+  - triage
+  - resource-management
+  - medical
+  - prioritization
+  - real-world
