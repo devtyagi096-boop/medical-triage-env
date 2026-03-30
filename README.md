@@ -43,6 +43,6 @@ Medical triage is a critical real-world task where decisions directly impact pat
 
 ```bash
 # Install from source
-git clone <your-repo-url>
+git clone <https://github.com/devtyagi096-boop/medical-triage-env.git>
 cd medical-triage-env
 pip install -r requirements.txt
