@@ -12,10 +12,6 @@ pinned: false
 
 A realistic emergency department triage simulation for training and evaluating AI agents on critical healthcare decision-making.
 
-# Medical Triage Environment
-
-A realistic emergency department triage simulation for training and evaluating AI agents on critical healthcare decision-making.
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Overview
@@ -37,12 +33,23 @@ Medical triage is a critical real-world task where decisions directly impact pat
 - ✅ **Involves risk assessment** - Misclassifying critical patients can have severe consequences
 - ✅ **Simulates real constraints** - Bed availability, staff limitations, patient arrivals
 
+## Live Demo
+
+Try the deployed environment:
+
+- **🚀 HuggingFace Space:** https://huggingface.co/spaces/makdiiimann/medical-triage-env
+- **🌐 API Endpoint:** https://makdiiimann-medical-triage-env.hf.space
+- **📚 Interactive API Docs:** https://makdiiimann-medical-triage-env.hf.space/docs
+- **💻 GitHub Repository:** https://github.com/devtyagi096-boop/medical-triage-env
+
 ## Installation
 
 ### Quick Start
 
 ```bash
-# Install from source
-git clone <https://github.com/devtyagi096-boop/medical-triage-env.git>
+# Clone from GitHub
+git clone https://github.com/devtyagi096-boop/medical-triage-env.git
 cd medical-triage-env
+
+# Install dependencies
 pip install -r requirements.txt
