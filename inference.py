@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import sys
 from typing import Any, Dict, List
 
 from openai import OpenAI
@@ -16,22 +17,27 @@ SEED = 42
 
 
 def emit(tag: str, payload: Dict[str, Any]) -> None:
-    """Emit structured JSON log line to stdout."""
+    """Emit structured log line to stdout with tag clearly visible."""
+    # Print plain-text tag line first (for simple grep-based validators)
+    parts = " ".join(f"{k}={v}" for k, v in payload.items() if not isinstance(v, (dict, list)))
+    print(f"{tag} {parts}", flush=True)
+    # Also print full JSON for structured validators
     record = {"tag": tag, **payload}
-    print(json.dumps(record, ensure_ascii=False), flush=True)
-
-
-def require_env(name: str) -> str:
-    value = os.environ.get(name)
-    if not value:
-        raise RuntimeError(f"Missing required environment variable: {name}")
-    return value
+    print(json.dumps(record, ensure_ascii=False, default=str), flush=True)
 
 
 def make_client():
-    api_base_url = require_env("API_BASE_URL")
-    model_name = require_env("MODEL_NAME")
-    hf_token = require_env("HF_TOKEN")
+    api_base_url = os.environ.get("API_BASE_URL", "")
+    model_name = os.environ.get("MODEL_NAME", "")
+    hf_token = os.environ.get("HF_TOKEN", "")
+
+    if not api_base_url:
+        raise RuntimeError("Missing required environment variable: API_BASE_URL")
+    if not model_name:
+        raise RuntimeError("Missing required environment variable: MODEL_NAME")
+    if not hf_token:
+        raise RuntimeError("Missing required environment variable: HF_TOKEN")
+
     client = OpenAI(base_url=api_base_url, api_key=hf_token)
     return client, model_name
 
@@ -122,7 +128,7 @@ def run_single_task(task: str, client: OpenAI, model_name: str) -> Dict[str, Any
         "task": task,
         "seed": SEED,
         "max_steps": MAX_STEPS,
-        "timestamp": time.time()
+        "timestamp": round(time.time(), 3)
     })
 
     while not done and step_idx < MAX_STEPS:
@@ -151,11 +157,12 @@ def run_single_task(task: str, client: OpenAI, model_name: str) -> Dict[str, Any
         emit("[STEP]", {
             "task": task,
             "step": step_idx,
-            "action": action.model_dump(),
-            "reward": reward.total,
+            "action_type": action.action_type,
+            "patient_id": action.patient_id or "null",
+            "priority_level": action.priority_level or "null",
+            "reward": round(reward.total, 4),
             "done": done,
-            "info": info,
-            "model_error": model_error
+            "model_error": model_error or "null"
         })
 
         if len(messages) > 10:
@@ -164,7 +171,16 @@ def run_single_task(task: str, client: OpenAI, model_name: str) -> Dict[str, Any
     score = grade_task(env, task)
     metrics = env.get_episode_metrics()
 
-    result = {
+    emit("[END]", {
+        "task": task,
+        "score": round(score, 4),
+        "total_reward": round(total_reward, 4),
+        "steps_completed": step_idx,
+        "patients_treated": metrics.get("patients_treated", 0),
+        "triage_accuracy": round(metrics.get("triage_accuracy", 0.0), 4)
+    })
+
+    return {
         "task": task,
         "score": score,
         "metrics": metrics,
@@ -172,23 +188,37 @@ def run_single_task(task: str, client: OpenAI, model_name: str) -> Dict[str, Any
         "steps_completed": step_idx
     }
 
-    emit("[END]", result)
-    return result
-
 
 def main():
     started_at = time.time()
-    client, model_name = make_client()
+
+    try:
+        client, model_name = make_client()
+    except RuntimeError as e:
+        print(f"[ERROR] {e}", flush=True)
+        sys.exit(1)
 
     all_results = []
     for task in TASKS:
-        all_results.append(run_single_task(task, client, model_name))
+        try:
+            result = run_single_task(task, client, model_name)
+            all_results.append(result)
+        except Exception as e:
+            print(f"[ERROR] task={task} error={e}", flush=True)
+            # Still emit [END] so validator sees the tag
+            emit("[END]", {
+                "task": task,
+                "score": 0.0,
+                "total_reward": 0.0,
+                "steps_completed": 0,
+                "error": str(e)
+            })
 
-    emit("[END]", {
-        "summary": all_results,
-        "runtime_seconds": round(time.time() - started_at, 3),
-        "task_count": len(all_results)
-    })
+    print(
+        f"[SUMMARY] tasks={len(all_results)} "
+        f"runtime={round(time.time() - started_at, 2)}s",
+        flush=True
+    )
 
 
 if __name__ == "__main__":
