@@ -14,6 +14,7 @@ COPY models.py .
 COPY environment.py .
 COPY grader.py .
 COPY baseline.py .
+COPY inference.py .
 COPY openenv.yaml .
 COPY server/ ./server/
 

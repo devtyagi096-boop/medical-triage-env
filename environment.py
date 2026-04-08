@@ -184,34 +184,91 @@ class MedicalTriageEnv:
         """Generate realistic vital signs and complaints"""
         presentations = {
             1: [
-                ("Chest pain radiating to left arm", 
-                 {"heart_rate": 140, "bp_sys": 95, "bp_dias": 60, "resp_rate": 28, "o2_sat": 88, "pain": 9},
+                ("Chest pain radiating to left arm, diaphoresis",
+                 {"heart_rate": 140, "bp_sys": 90, "bp_dias": 60, "resp_rate": 28, "o2_sat": 88, "pain": 9},
                  ["Hypertension", "Diabetes"]),
+                ("Unresponsive, found collapsed at home",
+                 {"heart_rate": 40, "bp_sys": 70, "bp_dias": 40, "resp_rate": 6, "o2_sat": 82},
+                 ["Coronary artery disease"]),
+                ("Severe difficulty breathing, unable to speak in full sentences",
+                 {"heart_rate": 130, "bp_sys": 100, "bp_dias": 65, "resp_rate": 34, "o2_sat": 84, "pain": 7},
+                 ["Asthma", "COPD"]),
+                ("Sudden onset severe headache, worst of life, neck stiffness",
+                 {"heart_rate": 110, "bp_sys": 190, "bp_dias": 110, "resp_rate": 20, "o2_sat": 96, "pain": 10},
+                 []),
+                ("Massive GI bleed, hematemesis, hypotensive",
+                 {"heart_rate": 145, "bp_sys": 80, "bp_dias": 50, "resp_rate": 24, "o2_sat": 91, "pain": 8},
+                 ["Liver cirrhosis", "Alcohol use disorder"]),
             ],
             2: [
-                ("Severe abdominal pain, vomiting",
-                 {"heart_rate": 110, "bp_sys": 120, "temp": 38.5, "pain": 8},
+                ("Severe abdominal pain, vomiting, rigid abdomen",
+                 {"heart_rate": 115, "bp_sys": 118, "bp_dias": 76, "temp": 38.6, "pain": 8},
                  ["Gallstones"]),
+                ("High fever, confusion, rigors",
+                 {"heart_rate": 120, "bp_sys": 95, "bp_dias": 60, "temp": 39.8, "resp_rate": 26, "o2_sat": 93, "pain": 5},
+                 ["Diabetes", "Immunocompromised"]),
+                ("Acute allergic reaction, throat tightness, hives",
+                 {"heart_rate": 118, "bp_sys": 105, "bp_dias": 68, "resp_rate": 22, "o2_sat": 94, "pain": 6},
+                 ["Penicillin allergy"]),
+                ("Stroke symptoms: facial droop, arm weakness, slurred speech",
+                 {"heart_rate": 88, "bp_sys": 175, "bp_dias": 100, "resp_rate": 18, "o2_sat": 96},
+                 ["Hypertension", "Atrial fibrillation"]),
+                ("Diabetic ketoacidosis, fruity breath, altered mentation",
+                 {"heart_rate": 112, "bp_sys": 105, "bp_dias": 65, "temp": 37.2, "resp_rate": 28, "o2_sat": 97, "pain": 4},
+                 ["Type 1 Diabetes"]),
             ],
             3: [
-                ("Fever and cough for 3 days",
-                 {"heart_rate": 95, "temp": 38.8, "resp_rate": 20, "o2_sat": 95, "pain": 4},
+                ("Fever and productive cough for 3 days, moderate distress",
+                 {"heart_rate": 98, "temp": 38.8, "resp_rate": 20, "o2_sat": 95, "pain": 4},
                  []),
+                ("Moderate flank pain, dysuria, frequency",
+                 {"heart_rate": 92, "temp": 38.2, "bp_sys": 128, "bp_dias": 80, "pain": 6},
+                 ["Recurrent UTIs"]),
+                ("Closed head injury after fall, GCS 14, no LOC",
+                 {"heart_rate": 85, "bp_sys": 135, "bp_dias": 82, "resp_rate": 16, "o2_sat": 98, "pain": 5},
+                 []),
+                ("Moderate asthma exacerbation, wheezing, speaking in phrases",
+                 {"heart_rate": 105, "resp_rate": 24, "o2_sat": 93, "pain": 3},
+                 ["Asthma"]),
+                ("Acute back pain after lifting, unable to walk comfortably",
+                 {"heart_rate": 88, "bp_sys": 130, "bp_dias": 84, "pain": 7},
+                 ["Hypertension"]),
             ],
             4: [
-                ("Minor laceration requiring stitches",
-                 {"heart_rate": 80, "pain": 4},
+                ("Minor laceration on forearm requiring sutures",
+                 {"heart_rate": 80, "bp_sys": 122, "bp_dias": 78, "pain": 4},
+                 []),
+                ("Sprained ankle after sports injury, weight-bearing",
+                 {"heart_rate": 76, "bp_sys": 118, "bp_dias": 74, "pain": 5},
+                 []),
+                ("Ear pain and mild fever for 2 days",
+                 {"heart_rate": 82, "temp": 37.9, "pain": 4},
+                 []),
+                ("Mild allergic reaction, localized hives, no airway involvement",
+                 {"heart_rate": 78, "bp_sys": 120, "bp_dias": 76, "pain": 2},
+                 []),
+                ("Dental pain, unable to see dentist",
+                 {"heart_rate": 80, "pain": 6},
                  []),
             ],
             5: [
-                ("Cold symptoms for 1 week",
-                 {"temp": 37.5, "o2_sat": 98},
+                ("Cold symptoms for 1 week, mild congestion",
+                 {"heart_rate": 72, "temp": 37.3, "o2_sat": 99},
                  []),
+                ("Prescription refill request, stable chronic condition",
+                 {"heart_rate": 70, "bp_sys": 125, "bp_dias": 80},
+                 ["Hypertension"]),
+                ("Mild rash on arm for 3 days, no systemic symptoms",
+                 {"heart_rate": 74, "pain": 1},
+                 []),
+                ("Routine follow-up, no acute complaints",
+                 {"heart_rate": 68, "bp_sys": 118, "bp_dias": 76},
+                 ["Diabetes"]),
             ]
         }
-        
+
         complaint, vitals_dict, history = random.choice(presentations[acuity])
-        
+
         vital_signs = VitalSigns(
             heart_rate=vitals_dict.get("heart_rate"),
             blood_pressure_systolic=vitals_dict.get("bp_sys"),
@@ -221,7 +278,7 @@ class MedicalTriageEnv:
             oxygen_saturation=vitals_dict.get("o2_sat"),
             pain_level=vitals_dict.get("pain")
         )
-        
+
         return vital_signs, complaint, history
     
     def _generate_medications(self, history: List[str]) -> List[str]:

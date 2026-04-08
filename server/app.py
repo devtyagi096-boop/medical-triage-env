@@ -137,7 +137,7 @@ async def get_state(env_id: str):
     env = environments[env_id]
     return env._get_state().dict()
 
-@app.post("/grader")
+@app.get("/grader")
 async def run_grader(env_id: str, task: str):
     """Grade the completed episode"""
     if env_id not in environments:
@@ -152,15 +152,15 @@ async def run_grader(env_id: str, task: str):
         "metrics": metrics
     }
 
-@app.post("/baseline")
+@app.get("/baseline")
 async def run_baseline():
-    """Run baseline inference (returns pre-computed scores due to API limits)"""
+    """Return pre-computed baseline scores"""
     return {
         "message": "Baseline scores from test run",
         "scores": {
             "easy": 0.940,
             "medium": 0.792,
-            "hard": 0.500
+            "hard": 0.042
         },
         "note": "Actual baseline requires GROQ_API_KEY environment variable. See baseline.py for implementation."
     }

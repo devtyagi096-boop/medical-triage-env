@@ -2,7 +2,7 @@
 name: medical-triage
 version: 1.0.0
 description: Emergency department patient triage environment where agents must prioritize patients and manage limited medical resources
-author: Your Name
+author: Arnav Tyagi
 license: MIT
 
 tasks:
@@ -96,4 +96,4 @@ tags:
   - resource-management
   - medical
   - prioritization
-  - real-world
+  - real-world`

@@ -1,5 +1,7 @@
 # baseline.py
 import os
+from dotenv import load_dotenv
+load_dotenv()
 from openai import OpenAI
 from environment import MedicalTriageEnv
 from models import Action
