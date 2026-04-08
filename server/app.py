@@ -2,7 +2,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import sys
 import os
 
@@ -34,7 +34,7 @@ environments: Dict[str, MedicalTriageEnv] = {}
 
 class ResetRequest(BaseModel):
     task: str = "medium"
-    seed: int = None
+    seed: Optional[int] = None
 
 class StepRequest(BaseModel):
     env_id: str
@@ -89,9 +89,11 @@ async def list_tasks():
     }
 
 @app.post("/reset")
-async def reset(request: ResetRequest):
+async def reset(request: ResetRequest = None):
     """Reset environment and start new episode"""
     try:
+        if request is None:
+            request = ResetRequest()
         env = MedicalTriageEnv(task=request.task, seed=request.seed)
         obs, state = env.reset()
         
