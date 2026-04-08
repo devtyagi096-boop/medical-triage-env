@@ -182,7 +182,7 @@ def run_single_task(task: str, client: OpenAI, model_name: str) -> Dict[str, Any
         "steps_completed": step_idx
     }
 
-    emit("[END]", result)
+    emit("[RESULT]", result)
     return result
 
 
