@@ -16,6 +16,8 @@ COPY grader.py .
 COPY baseline.py .
 COPY inference.py .
 COPY openenv.yaml .
+COPY pyproject.toml .
+COPY uv.lock .
 COPY server/ ./server/
 
 # HuggingFace Spaces uses port 7860

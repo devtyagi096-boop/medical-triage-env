@@ -192,12 +192,12 @@ curl "https://makdiiimann-medical-triage-env.hf.space/grader?env_id=<env_id>&tas
 - `MODEL_NAME` — Model identifier
 - `HF_TOKEN` — Bearer token / API key
 
-It emits structured JSON logs to stdout:
+It emits structured plain-text logs to stdout, one line per event:
 
 - `[START]` — emitted at the beginning of each task
 - `[STEP]` — emitted after every environment step with action, reward, and info
-- `[RESULT]` — emitted at the end of each task with score and metrics
-- `[END]` — emitted once at the very end with full summary across all tasks
+- `[END]` — emitted at the end of each task with score and metrics
+- `[SUMMARY]` — emitted once at the very end with total runtime
 
 ```bash
 export API_BASE_URL=https://api-inference.huggingface.co/v1
@@ -245,6 +245,8 @@ medical-triage-env/
 ├── baseline.py          # Baseline agent using Groq API
 ├── baseline_results.json
 ├── openenv.yaml         # Environment metadata
+├── pyproject.toml       # Package metadata and entry points
+├── uv.lock              # Locked dependencies
 ├── requirements.txt
 ├── Dockerfile
 ├── server/
