@@ -37,14 +37,10 @@ def emit(tag: str, payload: Dict[str, Any]) -> None:
 
 
 def make_client():
-    api_base_url = os.environ.get("API_BASE_URL", "").strip()
-    model_name = os.environ.get("MODEL_NAME", "").strip()
+    api_base_url = os.environ.get("API_BASE_URL", "https://api-inference.huggingface.co/v1").strip()
+    model_name = os.environ.get("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct").strip()
     hf_token = os.environ.get("HF_TOKEN", "").strip()
 
-    if not api_base_url:
-        raise RuntimeError("Missing required environment variable: API_BASE_URL")
-    if not model_name:
-        raise RuntimeError("Missing required environment variable: MODEL_NAME")
     if not hf_token:
         raise RuntimeError("Missing required environment variable: HF_TOKEN")
 
