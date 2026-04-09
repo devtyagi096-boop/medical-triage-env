@@ -5,6 +5,10 @@ import sys
 import traceback
 from typing import Any, Dict, List
 
+# Force unbuffered stdout — critical for validator to see output
+os.environ["PYTHONUNBUFFERED"] = "1"
+sys.stdout.reconfigure(line_buffering=True)
+
 from openai import OpenAI
 
 from environment import MedicalTriageEnv
@@ -18,17 +22,18 @@ SEED = 42
 
 
 def emit(tag: str, payload: Dict[str, Any]) -> None:
-    """Emit structured log line to stdout — plain text + JSON for all validator types."""
+    """Emit one log line per event — tag prefix + key=value pairs, always to stdout."""
     try:
         parts = " ".join(
             f"{k}={v}" for k, v in payload.items()
             if not isinstance(v, (dict, list))
         )
-        print(f"{tag} {parts}", flush=True)
-        record = {"tag": tag, **payload}
-        print(json.dumps(record, ensure_ascii=False, default=str), flush=True)
+        line = f"{tag} {parts}"
+        sys.stdout.write(line + "\n")
+        sys.stdout.flush()
     except Exception:
-        print(f"{tag}", flush=True)
+        sys.stdout.write(f"{tag}\n")
+        sys.stdout.flush()
 
 
 def make_client():
