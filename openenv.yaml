@@ -1,3 +1,15 @@
+---
+title: Medical Triage Environment
+emoji: 🏥
+colorFrom: red
+colorTo: blue
+sdk: docker
+pinned: false
+app_port: 7860
+base_path: /docs
+tags:
+  - openenv
+
 # openenv.yaml
 name: medical-triage
 version: 1.0.0
@@ -16,7 +28,7 @@ tasks:
       total_beds: 8
       staff_count: 4
       max_patients: 15
-    
+
   - id: medium
     name: Standard ED Operations
     description: Moderate patient volume with resource constraints and mixed acuity
@@ -27,7 +39,7 @@ tasks:
       total_beds: 6
       staff_count: 3
       max_patients: 25
-    
+
   - id: hard
     name: Mass Casualty Scenario
     description: High patient volume, limited resources, many critical cases requiring rapid decision-making
@@ -96,4 +108,4 @@ tags:
   - resource-management
   - medical
   - prioritization
-  - real-world`
+  - real-world
