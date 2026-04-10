@@ -12,7 +12,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from environment import MedicalTriageEnv
 from models import Action, Observation, State, Reward
 from grader import grade_task
-import json
 
 app = FastAPI(
     title="Medical Triage Environment",
@@ -89,21 +88,21 @@ async def list_tasks():
     }
 
 @app.post("/reset")
-async def reset(request: ResetRequest = None):
+async def reset(request: Optional[ResetRequest] = None):
     """Reset environment and start new episode"""
     try:
         if request is None:
             request = ResetRequest()
         env = MedicalTriageEnv(task=request.task, seed=request.seed)
         obs, state = env.reset()
-        
+
         env_id = state.episode_id
         environments[env_id] = env
-        
+
         return {
             "env_id": env_id,
-            "observation": obs.dict(),
-            "state": state.dict()
+            "observation": obs.model_dump(),
+            "state": state.model_dump()
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -121,11 +120,11 @@ async def step(request: StepRequest):
         obs, reward, done, info, state = env.step(action)
         
         return {
-            "observation": obs.dict(),
-            "reward": reward.dict(),
+            "observation": obs.model_dump(),
+            "reward": reward.model_dump(),
             "done": done,
             "info": info,
-            "state": state.dict()
+            "state": state.model_dump()
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -137,7 +136,7 @@ async def get_state(env_id: str):
         raise HTTPException(status_code=404, detail="Environment not found")
     
     env = environments[env_id]
-    return env._get_state().dict()
+    return env._get_state().model_dump()
 
 @app.get("/grader")
 async def run_grader(env_id: str, task: str):

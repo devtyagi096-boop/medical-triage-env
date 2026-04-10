@@ -1,27 +1,33 @@
 FROM python:3.11-slim
 
+LABEL maintainer="devtyagi096"
+LABEL description="Medical Triage Environment for OpenEnv RL Challenge"
+
 WORKDIR /app
 
-# Install curl
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy and install requirements
+# Copy and install requirements first (layer caching)
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Copy application files
-COPY models.py .
-COPY environment.py .
-COPY grader.py .
-COPY baseline.py .
-COPY inference.py .
-COPY openenv.yaml .
-COPY pyproject.toml .
-COPY uv.lock .
-COPY server/ ./server/
+# Copy all application code
+COPY . .
 
-# HuggingFace Spaces uses port 7860
+# Environment
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "from src.env.medical_triage_env import MedicalTriageEnv; print('ok')"
+
 EXPOSE 7860
 
-# Start server on port 7860
+# Default: run the FastAPI server (HuggingFace Spaces)
 CMD ["uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "7860"]
