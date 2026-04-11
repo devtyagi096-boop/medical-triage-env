@@ -192,12 +192,13 @@ curl "https://makdiiimann-medical-triage-env.hf.space/grader?env_id=<env_id>&tas
 - `MODEL_NAME` — Model identifier
 - `HF_TOKEN` — Bearer token / API key
 
-It emits structured plain-text logs to stdout, one line per event:
+It emits exactly three line types to stdout per episode:
 
-- `[START]` — emitted at the beginning of each task
-- `[STEP]` — emitted after every environment step with action, reward, and info
-- `[END]` — emitted at the end of each task with score and metrics
-- `[SUMMARY]` — emitted once at the very end with total runtime
+- `[START]` — one line at episode begin: `task=`, `env=`, `model=`
+- `[STEP]` — one line per step: `step=`, `action=`, `reward=`, `done=`, `error=`
+- `[END]` — one line after episode ends (always emitted, even on exception): `success=`, `steps=`, `rewards=`
+
+Rewards are formatted to 2 decimal places. Booleans are lowercase (`true`/`false`). Summary statistics are logged to `stderr` only.
 
 ```bash
 export API_BASE_URL=https://api-inference.huggingface.co/v1
@@ -238,20 +239,38 @@ The Dockerfile copies all required files including `inference.py` and exposes po
 
 ```
 medical-triage-env/
-├── models.py            # Pydantic models: Observation, Action, Reward, State
+├── inference.py         # Validator-facing inference script (competition entry point)
+├── client.py            # HTTP client for the environment server
 ├── environment.py       # Core simulation logic
+├── models.py            # Pydantic models: Observation, Action, Reward, State
 ├── grader.py            # Deterministic task graders (easy/medium/hard)
-├── inference.py         # Validator-facing inference script
 ├── baseline.py          # Baseline agent using Groq API
 ├── baseline_results.json
 ├── openenv.yaml         # Environment metadata
-├── pyproject.toml       # Package metadata and entry points
-├── uv.lock              # Locked dependencies
 ├── requirements.txt
 ├── Dockerfile
+├── .env.example
+├── src/
+│   ├── env/
+│   │   ├── medical_triage_env.py  # Enhanced environment with deterioration
+│   │   ├── patient.py             # Patient model
+│   │   └── conditions.py          # Medical conditions database
+│   ├── agent/
+│   │   ├── llm_agent.py           # LLM-based triage agent
+│   │   └── prompts.py             # Prompt engineering
+│   └── utils/
+│       ├── logger.py              # Structured logging (stderr only)
+│       └── metrics.py             # Performance tracking
 ├── server/
 │   └── app.py           # FastAPI server
-└── README.md
+├── tests/
+│   ├── test_env.py
+│   ├── test_inference.py
+│   └── test_output_format.py
+└── examples/
+    ├── basic_usage.py
+    ├── rule_based_agent.py
+    └── evaluation.py
 ```
 
 ---
