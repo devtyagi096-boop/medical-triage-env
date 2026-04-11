@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-LABEL maintainer="devtyagi096"
+LABEL maintainer="arnav-tyagi"
 LABEL description="Medical Triage Environment for OpenEnv RL Challenge"
 
 WORKDIR /app

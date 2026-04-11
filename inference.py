@@ -3,7 +3,7 @@
 Medical Triage Environment - Competition Inference Script
 OpenEnv RL Challenge Submission
 
-Author: DevTyagi
+Author: Arnav Tyagi
 License: MIT
 """
 
